@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cek Ganjil Genap</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f8ff;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+            width: 80%;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            font-size: 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .hasil {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>🔢 Cek Ganjil/Genap</h2>
+        <input type="number" id="angkaInput" placeholder="Masukkan Sebuah Angka"><br><br>
+
+        <button onclick="cekAngka()">Cek Angka</button>
+        <button onclick="reset()" style="background: #e74c3c;">Reset</button>
+
+        <div class="hasil">Hasil: <span id="teksHasil">-</span></div>
+    </div>
+
+    <script>
+        function cekAngka() {
+            // Mengambil nilai dari inputan user
+            let angka = parseInt(document.getElementById('angkaInput').value);
+
+            // Validasi jika user belum memasukkan angka
+            if (isNaN(angka)) {
+                alert("Silakan masukkan angka terlebih dahulu!");
+                return;
+            }
+
+            // Logika if-else dan modulus % 2 sesuai permintaan soal
+            if (angka % 2 === 0) {
+                document.getElementById('teksHasil').innerHTML = "Angka Genap";
+            } else {
+                document.getElementById('teksHasil').innerHTML = "Angka Ganjil";
+            }
+        }
+
+        function reset() {
+            document.getElementById('angkaInput').value = "";
+            document.getElementById('teksHasil').innerHTML = "-";
+        }
+    </script>
+</body>
+
+</html>

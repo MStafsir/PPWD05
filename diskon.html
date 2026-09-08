@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Diskon Mewah</title>
+    <style>
+        /* =========================================
+           1. RESET & BASIC SETUP
+           ========================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #050505;
+            /* Warna dasar gelap */
+            overflow: hidden;
+            /* Mencegah scroll dari animasi liquid */
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            /* Memaksa ke rata kanan */
+            padding-right: 10vw;
+            /* Jarak dari sisi kanan layar */
+            position: relative;
+        }
+
+        /* =========================================
+           2. ANIMASI BACKGROUND AURORA AWWWARDS STYLE
+           ========================================= */
+        .liquid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            background-color: #030014;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.8;
+            animation: moveAurora infinite alternate linear;
+        }
+
+        .blob.satu {
+            width: 70vw;
+            height: 70vw;
+            background: #ff2a85;
+            top: -20%;
+            left: -10%;
+            animation-duration: 25s;
+            animation-name: aurora-1;
+        }
+
+        .blob.dua {
+            width: 80vw;
+            height: 80vw;
+            background: #8a2be2;
+            bottom: -30%;
+            right: -10%;
+            animation-duration: 28s;
+            animation-name: aurora-2;
+        }
+
+        .blob.tiga {
+            width: 60vw;
+            height: 60vw;
+            background: #00e5ff;
+            top: 40%;
+            left: 20%;
+            animation-duration: 22s;
+            animation-name: aurora-3;
+        }
+
+        .blob.empat {
+            width: 75vw;
+            height: 75vw;
+            background: #1a237e;
+            top: 10%;
+            right: 10%;
+            animation-duration: 30s;
+            animation-name: aurora-4;
+        }
+
+        @keyframes aurora-1 {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(15vw, 15vh) scale(1.2) rotate(90deg); }
+            100% { transform: translate(-10vw, 20vh) scale(0.9) rotate(180deg); }
+        }
+
+        @keyframes aurora-2 {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(-20vw, -15vh) scale(1.1) rotate(-90deg); }
+            100% { transform: translate(10vw, -25vh) scale(1) rotate(-180deg); }
+        }
+
+        @keyframes aurora-3 {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(25vw, -20vh) scale(1.3) rotate(90deg); }
+            100% { transform: translate(-15vw, 10vh) scale(0.8) rotate(180deg); }
+        }
+
+        @keyframes aurora-4 {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(-15vw, 25vh) scale(1.1) rotate(90deg); }
+            100% { transform: translate(20vw, -10vh) scale(0.9) rotate(180deg); }
+        }
+
+        /* =========================================
+           3. GLASSMORPHISM PANEL
+           ========================================= */
+        .glass-panel {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.05);
+            /* Kaca transparan */
+            backdrop-filter: blur(25px);
+            /* Blur konten di belakangnya */
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            color: #fff;
+            animation: panelFadeIn 1s ease-out forwards;
+        }
+
+        @keyframes panelFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h2 {
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 5px;
+        }
+
+        /* =========================================
+           4. INPUT & TOMBOL INTERAKTIF
+           ========================================= */
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group span {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 18px 20px 18px 55px;
+            /* Spasi untuk Rp */
+            font-size: 18px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: #fff;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        input[type="number"]:focus {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            cursor: pointer;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efek Kilap / Shine pada tombol utama */
+        .btn-hitung::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: skewX(-20deg);
+            transition: 0.5s;
+        }
+
+        .btn-hitung:hover::before {
+            left: 150%;
+        }
+
+        button:hover {
+            transform: translateY(-3px) scale(1.02);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        button:active {
+            transform: translateY(1px) scale(0.97);
+        }
+
+        .btn-reset {
+            color: #ff5e5e;
+            border-color: rgba(255, 94, 94, 0.3);
+        }
+
+        .btn-reset:hover {
+            background: rgba(255, 94, 94, 0.1);
+            box-shadow: 0 10px 25px rgba(255, 94, 94, 0.2);
+        }
+
+        /* =========================================
+           5. HASIL OUTPUT
+           ========================================= */
+        .result-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            /* Disembunyikan sebelum dihitung */
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+        }
+
+        .result-box.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .result-row.total {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.2);
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .text-green {
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        /* =========================================
+           6. RESPONSIVE DESIGN UTK MOBILE
+           ========================================= */
+        @media (max-width: 768px) {
+            body {
+                justify-content: center;
+                padding-right: 0;
+                padding: 20px;
+            }
+
+            .glass-panel {
+                width: 100%;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Animasi Aurora Super Cantik -->
+    <div class="liquid-bg">
+        <div class="blob satu"></div>
+        <div class="blob dua"></div>
+        <div class="blob tiga"></div>
+        <div class="blob empat"></div>
+    </div>
+
+    <!-- UI Kaca Utama -->
+    <div class="glass-panel">
+        <div class="header">
+            <h2>💳 Kalkulator Diskon</h2>
+            <p>Diskon 10% untuk transaksi > Rp 100.000</p>
+        </div>
+
+        <div class="input-group">
+            <span>Rp</span>
+            <input type="number" id="inputBelanja" placeholder="Masukkan total belanja..." />
+        </div>
+
+        <div class="btn-container">
+            <button class="btn-hitung" onclick="kalkulasi()">Hitung Tagihan</button>
+            <button class="btn-reset" onclick="resetAplikasi()">Reset</button>
+        </div>
+
+        <!-- Box Hasil Perhitungan -->
+        <div class="result-box" id="boxHasil">
+            <div class="result-row">
+                <span>Subtotal:</span>
+                <span id="teksSubtotal">Rp 0</span>
+            </div>
+            <div class="result-row">
+                <span>Diskon <span id="teksPersen">(0%)</span>:</span>
+                <span id="teksDiskon" class="text-green">- Rp 0</span>
+            </div>
+            <div class="result-row total">
+                <span>Total Bayar:</span>
+                <span id="teksTotal">Rp 0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Javascript Logika Kalkulator -->
+    <script>
+        // Fungsi untuk format angka menjadi Rupiah agar mewah
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+        }
+
+        function kalkulasi() {
+            let inputElemen = document.getElementById('inputBelanja');
+            let boxHasil = document.getElementById('boxHasil');
+            let totalBelanja = parseFloat(inputElemen.value);
+
+            // Validasi input
+            if (isNaN(totalBelanja) || totalBelanja < 0) {
+                // Efek getar (shake) jika error
+                inputElemen.style.transform = "translateX(-10px)";
+                setTimeout(() => inputElemen.style.transform = "translateX(10px)", 100);
+                setTimeout(() => inputElemen.style.transform = "translateX(-10px)", 200);
+                setTimeout(() => inputElemen.style.transform = "translateX(0)", 300);
+                return;
+            }
+
+            let diskon = 0;
+            let persentase = 0;
+
+            // Logika Diskon: Jika di atas 100.000, diskon 10%
+            if (totalBelanja > 100000) {
+                persentase = 10;
+                diskon = totalBelanja * 0.10; // 10%
+            }
+
+            let totalBayar = totalBelanja - diskon;
+
+            // Mengupdate DOM (tampilan text)
+            document.getElementById('teksSubtotal').innerText = formatRupiah(totalBelanja);
+            document.getElementById('teksPersen').innerText = `(${persentase}%)`;
+            document.getElementById('teksDiskon').innerText = `- ${formatRupiah(diskon)}`;
+            document.getElementById('teksTotal').innerText = formatRupiah(totalBayar);
+
+            // Memunculkan box hasil dengan animasi
+            boxHasil.classList.remove('show');
+            setTimeout(() => {
+                boxHasil.classList.add('show');
+            }, 50);
+        }
+
+        function resetAplikasi() {
+            document.getElementById('inputBelanja').value = "";
+            let boxHasil = document.getElementById('boxHasil');
+            boxHasil.classList.remove('show'); // Sembunyikan hasil
+            document.getElementById('inputBelanja').focus();
+        }
+    </script>
+</body>
+
+</html>
